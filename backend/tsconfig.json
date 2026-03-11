@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "types": ["node", "express"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  }
+}
