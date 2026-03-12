@@ -6,7 +6,7 @@ import { getUserPasswordByEmail } from "../../users/controllers/user.controller"
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const {password } = req.body;
     const user: any = await getUserPasswordByEmail(req, res);
 
     if (!user) {
