@@ -1,14 +1,18 @@
 import { z } from "zod";
+import { Request, Response, NextFunction } from "express";
 
-export const validate = async (schema: z.ZodType, data: unknown) => {
-  const result = await schema.safeParseAsync(data);
+export const validate =
+  (schema: z.ZodSchema) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await schema.safeParseAsync(req.body);
 
-  if (!result.success) {
-    return result.error.issues.map((err) => ({
-      field: err.path.join("."),
-      message: err.message,
-    }));
-  }
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        errors: result.error.issues
+      });
+    }
 
-  return null;
-};
+    req.body = result.data;
+    next();
+  };

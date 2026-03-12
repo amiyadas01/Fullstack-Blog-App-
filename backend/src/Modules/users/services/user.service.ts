@@ -1,18 +1,23 @@
 import User from "../models/User.model";
 
-const checkUsernameExists = async (username: string) => {
-  const existingUser = await User.findOne({ username });
-  return !!existingUser;
-};
+const MAX_ATTEMPTS = 20;
 
-export const generateUniqueUsername = async (baseUsername: string): Promise<string> => {
-  let username = baseUsername;
-  let suffix = 1;
+export const generateUniqueUsername = async (
+  baseUsername: string,
+): Promise<string> => {
+  const taken = await User.find(
+    { username: { $regex: `^${baseUsername}(\\d+)?$` } },
+    { username: 1, _id: 0 },
+  ).lean();
 
-  while (await checkUsernameExists(username)) {
-    username = `${baseUsername}${suffix}`;
-    suffix++;
+  const takenSet = new Set(taken.map((u) => u.username));
+
+  if (!takenSet.has(baseUsername)) return baseUsername;
+
+  for (let i = 1; i <= MAX_ATTEMPTS; i++) {
+    const candidate = `${baseUsername}${i}`;
+    if (!takenSet.has(candidate)) return candidate;
   }
 
-  return username;
+  return `${baseUsername}_${Date.now()}`;
 };
