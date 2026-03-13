@@ -3,11 +3,13 @@ import userRoutes from "./Modules/users/api/route";
 import authRoutes from "./Modules/auth/api/route";
 import { logger } from "./utils/logger";
 import pinoHttp from "pino-http";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 app.use(pinoHttp({ logger }));
 app.use(express.json());
+app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api", userRoutes);
 

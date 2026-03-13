@@ -3,8 +3,8 @@ import mongoose, { Schema, Document } from "mongoose";
 interface SessionDocument extends Document {
   userId: mongoose.Types.ObjectId;
   refreshTokenHash: string;
-  device?: string;
-  ipAddress?: string;
+  device: string;
+  ipAddress: string;
   expiresAt: Date;
 }
 
@@ -24,20 +24,24 @@ const sessionSchema = new Schema<SessionDocument>(
 
     device: {
       type: String,
+      default: "unknown",
     },
 
     ipAddress: {
       type: String,
+      default: "unknown",
     },
 
     expiresAt: {
       type: Date,
       required: true,
+      // MongoDB will automatically delete the document after expiresAt
+      index: { expireAfterSeconds: 0 },
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Session = mongoose.model<SessionDocument>("Session", sessionSchema);

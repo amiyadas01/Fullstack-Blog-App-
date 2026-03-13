@@ -131,3 +131,7 @@ export const getUserPasswordByEmail = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const findUserByEmail = async (email: string) => {
+  return User.findOne({ email }).select("passwordHash role _id");
+};
